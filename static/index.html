@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>食品安全法律法规问答</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar">
+        <section class="brand">
+          <div>
+            <h1>食品安全法律法规问答</h1>
+            <p id="healthText">服务连接中</p>
+          </div>
+          <span id="modelBadge" class="badge">模型检测</span>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>知识库</h2>
+            <button id="refreshButton" class="icon-button" type="button" title="刷新">↻</button>
+          </div>
+          <div class="stat-grid">
+            <div>
+              <span id="docCount">0</span>
+              <small>资料</small>
+            </div>
+            <div>
+              <span id="chunkCount">0</span>
+              <small>片段</small>
+            </div>
+          </div>
+          <div id="roleStats" class="role-stats"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>导入资料</h2>
+          </div>
+          <form id="uploadForm" class="upload-form">
+            <label>
+              <span>文件</span>
+              <input id="fileInput" name="file" type="file" accept=".txt,.md,.pdf,.docx" required />
+            </label>
+            <label>
+              <span>标题</span>
+              <input id="titleInput" name="title" type="text" placeholder="资料标题" />
+            </label>
+            <label>
+              <span>角色</span>
+              <select id="documentRoleInput" name="role">
+                <option value="general">通用咨询</option>
+                <option value="regulator">监管机构</option>
+                <option value="consumer">消费者</option>
+                <option value="producer">生产经营者</option>
+              </select>
+            </label>
+            <label>
+              <span>来源</span>
+              <input id="sourceInput" name="source" type="text" placeholder="法规名称、链接或出处" />
+            </label>
+            <button class="primary-button" type="submit">导入</button>
+          </form>
+        </section>
+
+        <section class="panel evidence-panel">
+          <div class="panel-title">
+            <h2>成果证据</h2>
+            <span id="claimBadge" class="mini-badge">待检测</span>
+          </div>
+          <div id="evidenceSummary" class="evidence-summary"></div>
+        </section>
+
+        <section class="panel document-panel">
+          <div class="panel-title">
+            <h2>资料列表</h2>
+          </div>
+          <div id="documentList" class="document-list"></div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div class="role-switch" id="roleSwitch">
+            <button class="selected" type="button" data-role="auto">自动</button>
+            <button type="button" data-role="regulator">监管</button>
+            <button type="button" data-role="consumer">消费者</button>
+            <button type="button" data-role="producer">企业</button>
+            <button type="button" data-role="general">通用</button>
+          </div>
+          <div id="routeText" class="route-text">管理智能体待命</div>
+        </header>
+
+        <div id="chatLog" class="chat-log"></div>
+
+        <form id="chatForm" class="composer">
+          <textarea id="questionInput" rows="3" placeholder="输入食品安全法律法规问题" required></textarea>
+          <div class="composer-actions">
+            <label>
+              <span>引用</span>
+              <select id="topKInput">
+                <option value="3">3</option>
+                <option value="5" selected>5</option>
+                <option value="8">8</option>
+              </select>
+            </label>
+            <button id="sendButton" class="primary-button" type="submit">发送</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <template id="messageTemplate">
+      <article class="message">
+        <div class="message-head">
+          <strong></strong>
+          <span></span>
+        </div>
+        <div class="message-body"></div>
+        <div class="sources"></div>
+      </article>
+    </template>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

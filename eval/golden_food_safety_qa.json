@@ -1,0 +1,42 @@
+[
+  {
+    "id": "consumer-compensation",
+    "question": "消费者买到不符合食品安全标准的食品怎么赔偿？",
+    "role": "auto",
+    "expected_role": "consumer",
+    "must_include": ["消费者", "赔偿"],
+    "expected_source_keywords": ["消费者", "食品安全标准"]
+  },
+  {
+    "id": "regulator-inspection",
+    "question": "监管部门发现食品安全隐患后可以采取哪些处置措施？",
+    "role": "auto",
+    "expected_role": "regulator",
+    "must_include": ["整改", "抽样", "召回"],
+    "expected_source_keywords": ["监督检查", "风险"]
+  },
+  {
+    "id": "producer-recall",
+    "question": "食品生产企业发现产品可能危害人体健康时应如何召回？",
+    "role": "auto",
+    "expected_role": "producer",
+    "must_include": ["停止", "通知", "召回"],
+    "expected_source_keywords": ["生产经营者", "召回"]
+  },
+  {
+    "id": "producer-label",
+    "question": "预包装食品标签能不能写疾病治疗功能？",
+    "role": "auto",
+    "expected_role": "producer",
+    "must_include": ["标签", "不得", "疾病"],
+    "expected_source_keywords": ["预包装食品", "标签"]
+  },
+  {
+    "id": "consumer-complaint",
+    "question": "消费者发现食品安全问题可以向哪些部门投诉举报？",
+    "role": "auto",
+    "expected_role": "consumer",
+    "must_include": ["投诉", "举报", "部门"],
+    "expected_source_keywords": ["投诉举报", "市场监督"]
+  }
+]

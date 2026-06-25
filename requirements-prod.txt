@@ -1,0 +1,5 @@
+-r requirements.txt
+chromadb>=0.5
+langgraph>=0.2
+h11>=0.14
+httptools>=0.6

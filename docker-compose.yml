@@ -1,0 +1,28 @@
+services:
+  qa-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATA_DIR: /app/data
+      VECTOR_BACKEND: dense
+      EMBEDDING_PROVIDER: openai-compatible
+      EMBEDDING_MODEL: qwen3-embedding-0.6b
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-http://embedding-api:8000/v1}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-local-dev-key}
+      RERANKER_PROVIDER: http
+      RERANKER_MODEL: bge-reranker
+      RERANKER_URL: ${RERANKER_URL:-http://reranker:8000/rerank}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-http://vllm:8000/v1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-local-dev-key}
+      QA_MODEL: ${QA_MODEL:-Qwen3-72B-Chat}
+      WORKFLOW_BACKEND: ${WORKFLOW_BACKEND:-auto}
+    volumes:
+      - qa-data:/app/data
+
+  # Replace these placeholders with real vLLM / embedding / reranker deployments.
+  # They are declared as external endpoints in environment variables above so this
+  # compose file can be used either with local services or existing cluster URLs.
+
+volumes:
+  qa-data:
