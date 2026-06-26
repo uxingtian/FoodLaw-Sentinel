@@ -21,11 +21,17 @@ QUESTIONS = [
 
 def ask(base_url: str, question: str, timeout: float) -> dict:
     started = time.perf_counter()
-    response = requests.post(
-        f"{base_url.rstrip('/')}/api/chat",
-        json={"question": question, "role": "auto", "top_k": 5},
-        timeout=timeout,
-    )
+    session = requests.Session()
+    session.trust_env = False
+    try:
+        response = session.post(
+            f"{base_url.rstrip('/')}/api/chat",
+            json={"question": question, "role": "auto", "top_k": 5},
+            timeout=timeout,
+        )
+    except requests.RequestException as exc:
+        latency_ms = (time.perf_counter() - started) * 1000
+        return {"status": 0, "latency_ms": latency_ms, "ok": False, "error": str(exc)}
     latency_ms = (time.perf_counter() - started) * 1000
     return {"status": response.status_code, "latency_ms": latency_ms, "ok": response.ok}
 

@@ -456,6 +456,55 @@ def test_http_reranker_sends_bearer_token(monkeypatch):
     assert reranked[0].rerank_score == 0.7
 
 
+def test_benchmark_ask_ignores_environment_proxies(monkeypatch):
+    from scripts.benchmark import ask
+
+    captured = {}
+
+    class Response:
+        status_code = 200
+        ok = True
+
+    class Session:
+        def __init__(self):
+            self.trust_env = True
+
+        def post(self, url, *, json, timeout):
+            captured["trust_env"] = self.trust_env
+            captured["url"] = url
+            captured["json"] = json
+            captured["timeout"] = timeout
+            return Response()
+
+    monkeypatch.setattr("scripts.benchmark.requests.Session", Session)
+
+    result = ask("http://127.0.0.1:8010", "消费者如何索赔？", timeout=3)
+
+    assert captured["trust_env"] is False
+    assert captured["url"] == "http://127.0.0.1:8010/api/chat"
+    assert result["ok"] is True
+
+
+def test_benchmark_ask_records_request_exception(monkeypatch):
+    import requests
+
+    from scripts.benchmark import ask
+
+    class Session:
+        trust_env = True
+
+        def post(self, url, *, json, timeout):
+            raise requests.Timeout("slow")
+
+    monkeypatch.setattr("scripts.benchmark.requests.Session", Session)
+
+    result = ask("http://127.0.0.1:8010", "消费者如何索赔？", timeout=3)
+
+    assert result["status"] == 0
+    assert result["ok"] is False
+    assert "slow" in result["error"]
+
+
 def test_metrics_recorder_tracks_chat_response():
     from app.metrics import MetricsRecorder
     from app.models import ChatResponse
