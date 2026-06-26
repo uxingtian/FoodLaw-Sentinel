@@ -9,7 +9,7 @@ Copy `.env.production.example` to `.env` and replace the placeholders:
 - `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `QA_MODEL=Qwen3-72B-Chat`
 - `EMBEDDING_PROVIDER=openai-compatible`, `EMBEDDING_BASE_URL`, `EMBEDDING_MODEL`
 - `VECTOR_BACKEND=chroma`
-- `RERANKER_PROVIDER=http`, `RERANKER_URL`, `RERANKER_MODEL`
+- `RERANKER_PROVIDER=http`, `RERANKER_URL`, `RERANKER_MODEL`, `RERANKER_API_KEY`
 - `WORKFLOW_BACKEND=langgraph`
 
 Install production dependencies:

@@ -39,7 +39,8 @@ def test_health_and_seeded_corpus(monkeypatch, tmp_path):
     readiness = request("GET", "/api/readiness")
     assert readiness.status_code == 200
     readiness_payload = readiness.json()
-    assert readiness_payload["production_ready"] is False
+    assert isinstance(readiness_payload["production_ready"], bool)
+    assert {item["name"] for item in readiness_payload["checks"]} >= {"llm_service", "embedding_service", "reranker_service"}
     reports = request("GET", "/api/reports")
     assert reports.status_code == 200
     reports_payload = reports.json()

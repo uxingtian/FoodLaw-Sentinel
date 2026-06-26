@@ -42,6 +42,7 @@ class Settings:
     reranker_provider: str = os.getenv("RERANKER_PROVIDER", "local")
     reranker_model: str = os.getenv("RERANKER_MODEL", "bge-reranker")
     reranker_url: str = os.getenv("RERANKER_URL", "")
+    reranker_api_key: str = os.getenv("RERANKER_API_KEY", os.getenv("OPENAI_API_KEY", ""))
     workflow_backend: str = os.getenv("WORKFLOW_BACKEND", "auto")
 
     @property

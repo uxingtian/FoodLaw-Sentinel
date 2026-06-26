@@ -66,6 +66,8 @@ def check_reranker_service(settings: Settings, timeout: float) -> ReadinessCheck
         return ReadinessCheck("reranker_service", "local_fallback", "当前使用本地 reranker fallback")
     if not settings.reranker_url:
         return ReadinessCheck("reranker_service", "not_configured", "RERANKER_URL 未配置")
+    if not settings.reranker_api_key:
+        return ReadinessCheck("reranker_service", "not_configured", "RERANKER_API_KEY 或 OPENAI_API_KEY 未配置")
     try:
         response = requests.post(
             settings.reranker_url,
@@ -75,6 +77,7 @@ def check_reranker_service(settings: Settings, timeout: float) -> ReadinessCheck
                 "documents": ["食品生产经营者应当依法召回问题食品。"],
                 "top_k": 1,
             },
+            headers={"Authorization": f"Bearer {settings.reranker_api_key}"},
             timeout=timeout,
         )
         response.raise_for_status()

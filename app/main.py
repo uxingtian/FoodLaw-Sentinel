@@ -32,7 +32,12 @@ embedding_client = build_embedding_client(
     base_url=settings.embedding_base_url,
 )
 retriever = HybridRetriever(build_vector_store(settings.vector_backend, settings.vector_dir, embedding_client))
-reranker = build_reranker(settings.reranker_provider, settings.reranker_model, settings.reranker_url)
+reranker = build_reranker(
+    settings.reranker_provider,
+    settings.reranker_model,
+    settings.reranker_url,
+    settings.reranker_api_key,
+)
 tool_registry = ToolRegistry([QueryRewriteTool(), ComplianceChecklistTool(), GraphLookupTool(retriever.graph)])
 workflow = build_workflow(settings=settings, retriever=retriever, reranker=reranker, tool_registry=tool_registry)
 

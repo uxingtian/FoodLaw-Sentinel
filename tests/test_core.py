@@ -411,6 +411,51 @@ def test_parse_reranker_scores_accepts_common_shapes():
     ]
 
 
+def test_http_reranker_sends_bearer_token(monkeypatch):
+    from app.models import KnowledgeChunk
+    from app.reranker import HttpReranker
+    from app.retrieval import SearchResult
+
+    captured = {}
+
+    class Response:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {"scores": [0.7]}
+
+    def fake_post(url, *, json, headers=None, timeout):
+        captured["url"] = url
+        captured["json"] = json
+        captured["headers"] = headers
+        captured["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr("app.reranker.requests.post", fake_post)
+    reranker = HttpReranker("https://example.test/rerank", "bge-reranker", api_key="secret-token")
+    result = SearchResult(
+        chunk=KnowledgeChunk(
+            id="rerank-c1",
+            document_id="rerank-d1",
+            chunk_index=0,
+            title="召回",
+            role="producer",
+            source="测试",
+            text="食品生产经营者应当依法召回问题食品。",
+        ),
+        score=0.1,
+        bm25_score=0.1,
+        semantic_score=0.0,
+    )
+
+    reranked = reranker.rerank("问题食品如何召回？", "producer", [result], top_k=1)
+
+    assert captured["headers"] == {"Authorization": "Bearer secret-token"}
+    assert captured["json"]["model"] == "bge-reranker"
+    assert reranked[0].rerank_score == 0.7
+
+
 def test_metrics_recorder_tracks_chat_response():
     from app.metrics import MetricsRecorder
     from app.models import ChatResponse
@@ -470,10 +515,22 @@ def test_claim_verifier_separates_supported_and_unsupported_claims():
 
 
 def test_readiness_reports_local_fallbacks_for_default_settings():
-    from app.config import settings
+    from app.config import Settings
     from app.readiness import check_readiness
 
-    report = check_readiness(settings, timeout=0.1)
+    local_settings = Settings(
+        openai_api_key="",
+        openai_base_url="",
+        vector_backend="local",
+        embedding_provider="local",
+        embedding_api_key="",
+        embedding_base_url="",
+        reranker_provider="local",
+        reranker_url="",
+        reranker_api_key="",
+        workflow_backend="local",
+    )
+    report = check_readiness(local_settings, timeout=0.1)
     checks = {item["name"]: item for item in report["checks"]}
     assert report["production_ready"] is False
     assert checks["embedding_service"]["status"] in {"local_fallback", "not_configured"}

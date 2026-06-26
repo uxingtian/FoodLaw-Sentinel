@@ -47,10 +47,11 @@ class LocalReranker:
 class HttpReranker:
     """Adapter for BGE/gte style reranker HTTP services."""
 
-    def __init__(self, url: str, model_name: str = "bge-reranker", timeout: float = 30.0) -> None:
+    def __init__(self, url: str, model_name: str = "bge-reranker", timeout: float = 30.0, api_key: str = "") -> None:
         self.url = url
         self.model_name = model_name
         self.timeout = timeout
+        self.api_key = api_key.strip()
 
     def rerank(self, question: str, role: DocumentRole, results: list[SearchResult], top_k: int) -> list[SearchResult]:
         if not results:
@@ -61,7 +62,8 @@ class HttpReranker:
             "documents": [result.chunk.text for result in results],
             "top_k": top_k,
         }
-        response = requests.post(self.url, json=payload, timeout=self.timeout)
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else None
+        response = requests.post(self.url, json=payload, headers=headers, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
         scores = parse_reranker_scores(data, len(results))
@@ -86,10 +88,10 @@ def parse_reranker_scores(data: dict, expected: int) -> list[float]:
     return scores
 
 
-def build_reranker(provider: str, model_name: str, url: str = "") -> Reranker | None:
+def build_reranker(provider: str, model_name: str, url: str = "", api_key: str = "") -> Reranker | None:
     normalized = provider.lower()
     if normalized in {"", "none", "disabled"}:
         return None
     if normalized in {"http", "api", "bge", "gte"} and url:
-        return HttpReranker(url=url, model_name=model_name)
+        return HttpReranker(url=url, model_name=model_name, api_key=api_key)
     return LocalReranker(model_name=model_name)

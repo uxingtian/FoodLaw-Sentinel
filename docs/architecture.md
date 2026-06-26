@@ -41,6 +41,7 @@ EMBEDDING_API_KEY=local-dev-key
 RERANKER_PROVIDER=http
 RERANKER_MODEL=bge-reranker
 RERANKER_URL=http://reranker:8000/rerank
+RERANKER_API_KEY=local-dev-key
 
 OPENAI_BASE_URL=http://vllm:8000/v1
 OPENAI_API_KEY=local-dev-key
